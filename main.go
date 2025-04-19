@@ -1,18 +1,25 @@
 package main
 
 import (
+	"context"
+
 	"github.com/Raghulds/Go_REST_API_MUX/controller"
+	"github.com/Raghulds/Go_REST_API_MUX/helpers"
 	"github.com/Raghulds/Go_REST_API_MUX/repository"
 	"github.com/Raghulds/Go_REST_API_MUX/router"
 	"github.com/Raghulds/Go_REST_API_MUX/service"
 )
 
 var (
-	taskRepo, subTaskRepo = repository.NewFireStoreRepository()
-	taskService           = service.NewTaskService(taskRepo)
-	subTaskService        = service.NewSubTaskService(subTaskRepo)
-	taskController        = controller.NewTaskController(taskService)
-	subTaskController     = controller.NewSubTaskController(subTaskService)
+	ctx            = context.Background()
+	firebaseClient = helpers.ConnectToFirebaseAndGetClient(ctx)
+
+	taskRepo          = repository.NewTaskRepository(firebaseClient)
+	subTaskRepo       = repository.NewSubTaskRepository(firebaseClient)
+	taskService       = service.NewTaskService(taskRepo)
+	subTaskService    = service.NewSubTaskService(subTaskRepo)
+	taskController    = controller.NewTaskController(taskService)
+	subTaskController = controller.NewSubTaskController(subTaskService)
 )
 
 func main() {

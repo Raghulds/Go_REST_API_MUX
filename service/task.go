@@ -27,7 +27,7 @@ func (t *TaskServiceImpl) Validate(task *entity.Task) error {
 		return errors.New("")
 	}
 	if task.Name == "" {
-		return errors.New("Title cannot be empty")
+		return errors.New("title cannot be empty")
 	}
 	return nil
 }
@@ -37,5 +37,14 @@ func (t *TaskServiceImpl) GetTasks() ([]*entity.Task, error) {
 }
 
 func (t *TaskServiceImpl) CreateTask(task *entity.Task) (bool, error) {
-	return taskRepository.CreateTask(task)
+
+	validationErr := t.Validate(task)
+	if validationErr != nil {
+		return false, validationErr
+	}
+	_, err := taskRepository.CreateTask(task)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
 }
